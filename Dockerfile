@@ -3,7 +3,7 @@ FROM maven:3.9.4-eclipse-temurin-17 AS builder
 WORKDIR /app
 
 # Copy Maven wrapper and POM to leverage Docker cache
-COPY mvnw pom.xml ./
+COPY pom.xml .
 
 # Install dependencies and package the application
 RUN ./mvnw clean package -DskipTests
