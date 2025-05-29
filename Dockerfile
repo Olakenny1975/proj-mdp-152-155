@@ -1,17 +1,22 @@
-FROM eclipse-temurin:21.0.2_13-jdk-jammy AS builder
-WORKDIR /opt/app
-COPY .mvn/ .mvn::
-COPY mvnw pom.xml ./::
-RUN ./mvnw dependency:go-offline
-COPY ./src ./src
-RUN ./mvnw clean install
+# Stage 1: Build Stage
+FROM maven:3.9.4-eclipse-temurin-17 AS builder
+WORKDIR /app
 
-FROM eclipse-temurin:21.0.2_13-jre-jammy AS final
-WORKDIR /opt/app
-EXPOSE 8080
-COPY --from=builder /opt/app/target/*.jar /opt/app/*.jar
-ENTRYPOINT ["java", "-jar", "/opt/app/*.jar"]
+# Copy all files from the current directory to /app in the container
+COPY . .
 
+# Run Maven to compile and package the application
+RUN ./mvnw clean package -DskipTests
+
+# Stage 2: Deploy on Tomcat
+FROM tomcat:9.0.78-jdk17
+
+
+# Copy the WAR file from the build stage into Tomcat's webapps directory
+COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+
+# Optional health check
+HEALTHCHECK CMD curl --fail http://localhost:8080/ || exit 1
 
 
 
