@@ -6,6 +6,9 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
+# Ensure mvnw is executable
+RUN chmod +x mvnw
+
 # Run Maven to compile and package the application
 RUN ./mvnw clean package -DskipTests
 
