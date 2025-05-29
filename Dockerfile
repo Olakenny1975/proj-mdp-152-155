@@ -21,7 +21,7 @@ WORKDIR /usr/local/tomcat/webapps
 COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
 # Set appropriate permissions
-RUN chown -R tomcat:tomcat /usr/local/tomcat
+RUN chown -R tomcat:tomcat /usr/local/tomcat/webapps
 
 # Switch to non-root user
 USER tomcat
