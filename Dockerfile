@@ -10,7 +10,7 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Deploy on Tomcat
-FROM tomcat:9.0.78-jdk17-slim
+FROM tomcat:9.0.78-jdk17
 
 # Create a non-root user for security
 RUN groupadd -r tomcat && useradd -r -g tomcat tomcat
@@ -32,3 +32,4 @@ EXPOSE 8080
 
 # Start Tomcat when the container launches
 ENTRYPOINT ["catalina.sh", "run"]
+
