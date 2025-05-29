@@ -5,6 +5,11 @@ WORKDIR /app
 # Copy Maven wrapper and POM to leverage Docker cache
 COPY pom.xml .
 
+# Install dos2unix and apply to mvnw
+RUN apt-get update && apt-get install -y dos2unix && \
+    dos2unix mvnw && \
+    chmod +x mvnw
+
 # Install dependencies and package the application
 RUN ./mvnw clean package -DskipTests
 
