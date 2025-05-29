@@ -3,6 +3,8 @@ FROM maven:3.9.4-eclipse-temurin-17 AS builder
 WORKDIR /app
 
 # Copy only the necessary files to leverage Docker cache
+COPY mvnw ./
+COPY .mvn .mvn
 COPY pom.xml .
 COPY src ./src
 
