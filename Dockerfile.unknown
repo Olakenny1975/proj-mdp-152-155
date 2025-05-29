@@ -10,6 +10,3 @@ COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
 # Optional health check
 HEALTHCHECK CMD curl --fail http://localhost:8080 || exit 1
-
-
-
