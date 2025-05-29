@@ -3,14 +3,10 @@ FROM maven:3.9.4-eclipse-temurin-17 AS builder
 WORKDIR /app
 
 # Copy Maven wrapper and POM to leverage Docker cache
-COPY pom.xml .
-
-# Install dos2unix and apply to mvnw
-RUN apt-get update && apt-get install -y dos2unix && \
-    dos2unix mvnw && \
-    chmod +x mvnw
-
-# Install dependencies and package the application
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:go-offline
+COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Deploy on Tomcat
