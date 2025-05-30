@@ -26,8 +26,8 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
-            steps {
+    stage('Deploy') {
+        steps {
                 sshagent(credentials: ['deploy-server-credential']) {
                     sh """
                     scp -o StrictHostKeyChecking=no ./target/web*.war ec2-user@172.31.36.164:/opt/tomcat/webapps/ROOT.war
@@ -36,18 +36,3 @@ pipeline {
             }
         }
     }
-}
-// Post actions can be added here if needed
-    post {
-        always {
-            echo 'Cleaning up...'
-            sh 'docker rmi ${REPO_NAME}:${TAG} || true'
-        }
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
-        }
-    }
-}
