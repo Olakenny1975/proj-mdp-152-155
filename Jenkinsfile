@@ -18,20 +18,24 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credential', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    sh """
+                    sh '''
                     echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USER}" --password-stdin docker.io
                     docker push ${REPO_NAME}:${TAG}
                     docker logout
-                    """
+                    '''
                 }
             }
         }
-    stage('Deploy') {
-        steps {
+        stage('Deploy') {
+            steps {
                 sshagent(credentials: ['deploy-server-credential']) {
-                    sh """
-                    scp -o StrictHostKeyChecking=no ./target/web*.war ec2-user@172.31.36.164:/opt/tomcat/webapps/ROOT.war
-                    """
+                sh '''
+                    ssh -o StrictHostKeyChecking=noec2-user@172.31.36.164 '
+                    docker rm -f project-1 || true
+                    docker pull ${REPO_NAME}:${TAG}
+                     docker run -d --name project-1 -p 8080:8080 ${REPO_NAME}:${TAG}
+                       '
+                '''
                 }
             }
         }
