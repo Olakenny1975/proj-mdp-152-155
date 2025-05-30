@@ -56,3 +56,22 @@ pipeline {
         }
     }
 }
+pipeline {
+    agent any
+
+    tools {
+        git 'Default' // Match the name configured in Global Tool Configuration
+    }
+
+    environment {
+        GIT_CREDENTIALS = credentials('your-credentials-id') // Replace with your credentials ID
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/Olakenny1975/proj-mdp-152-155.git', credentialsId: 'your-credentials-id'
+            }
+        }
+    }
+}
