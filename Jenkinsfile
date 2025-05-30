@@ -2,11 +2,20 @@ pipeline {
     agent {
         label "builder"
     }
+
     environment {
         REPO_NAME = "kehisa/project-1"
-        TAG = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout | tr -d "_"', returnStdout: true).trim()
     }
+
     stages {
+        stage('Set Tag Version') {
+            steps {
+                script {
+                    env.TAG = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout | tr -d "_"', returnStdout: true).trim()
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh """
@@ -15,28 +24,34 @@ pipeline {
                 """
             }
         }
+
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credential', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    sh '''
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-credential',
+                    usernameVariable: 'DOCKERHUB_USER',
+                    passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                    sh """
                     echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USER}" --password-stdin docker.io
                     docker push ${REPO_NAME}:${TAG}
                     docker logout
-                    '''
+                    """
                 }
             }
         }
+
         stage('Deploy') {
             steps {
                 sshagent(credentials: ['deploy-server-credential']) {
-                sh '''
-                    ssh -o StrictHostKeyChecking=noec2-user@172.31.36.164 '
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ec2-user@172.31.36.164 '
                     docker rm -f project-1 || true
                     docker pull ${REPO_NAME}:${TAG}
-                     docker run -d --name project-1 -p 8080:8080 ${REPO_NAME}:${TAG}
-                       '
-                '''
+                    docker run -d --name project-1 -p 8080:8080 ${REPO_NAME}:${TAG}
+                    '
+                    """
                 }
             }
         }
     }
+}
