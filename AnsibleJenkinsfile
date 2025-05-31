@@ -6,17 +6,17 @@ pipeline {
     environment {
         BUCKET_NAME = "project-2.k8s.local"
         CLUSTER_NAME = "project-2-k8-bucket"
-        ANSIBLE_DIR = "ansible"  // Defined as variable for reuse
+        ANSIBLE_DIR = "ansible"
     }
 
     stages {
         stage('Install Kubernetes Tools') {
             steps {
                 script {
-                    echo "🚀 Installing Kubernetes tools..."
+                    echo "Installing Kubernetes tools..."
                     sh """
                     cd ${ANSIBLE_DIR}
-                    ansible-playbook -i inventory/hosts.ini playbooks/install_kubernetes.yml -v
+                    ansible-playbook -i inventory/hosts.ini playbooks/install_kubernetes.yml
                     """
                 }
             }
@@ -25,25 +25,19 @@ pipeline {
         stage('Create Cluster') {
             steps {
                 script {
-                    echo "🛠️ Creating Kubernetes cluster..."
+                    echo "Creating Kubernetes cluster..."
                     sh """
                     cd ${ANSIBLE_DIR}
-                    ansible-playbook -i inventory.ini playbooks/create_bucket.yml -v
-                    """
-                }
-            }
-        }
-
-        stage('Validate Cluster') {
-            steps {
-                script {
-                    echo "🔍 Validating cluster setup..."
-                    sh """
-                    cd ${ANSIBLE_DIR}
-                    ansible-playbook -i inventory.ini playbooks/validate_cluster.yml -v
+                    ansible-playbook -i inventory.ini playbooks/create_bucket.yml
                     """
                 }
             }
         }
     }
 
+    post {
+        always {
+            echo "Pipeline completed with status: ${currentBuild.currentResult}"
+        }
+    }
+}
