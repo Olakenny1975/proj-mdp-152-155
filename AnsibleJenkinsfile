@@ -8,30 +8,21 @@ pipeline {
         CLUSTER_NAME = "project-2-k8-bucket"
     }
 
-stage('Install Kubernetes Tools') {
-    steps {
-        script {
-            echo "Verifying directory structure..."
-            sh """
-            cd ${env.WORKSPACE}
-            echo "Current workspace:"
-            pwd
-            echo "Contents:"
-            ls -la
-            echo "Ansible directory contents:"
-            ls -la ansible/
-            echo "Trying to find playbooks:"
-            find . -name install_kubernetes.yml
-            """
-            
-            echo "Installing Kubernetes tools..."
-            sh """
-            cd ${env.WORKSPACE}/ansible
-            ansible-playbook -i inventory/hosts.ini playbooks/install_kubernetes.yml
-            """
+ stages {
+        stage('Install Kubernetes Tools') {
+            steps {
+                script {
+                    echo "Installing Kubernetes tools..."
+                    sh """
+                    cd ${env.WORKSPACE}/ansible
+                    pwd
+                    ls -la playbooks/
+                    ansible-playbook -i inventory/hosts.ini playbooks/install_kubernetes.yml
+                    """
+                }
+            }
         }
-    }
-}
+        
         stage('Create Cluster') {
             steps {
                 script {
