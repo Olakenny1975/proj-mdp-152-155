@@ -22,6 +22,3 @@
       register: cluster_create
       changed_when: " 'created cluster' in cluster_create.stdout"
 
-    - name: Wait for cluster readiness
-      ansible.builtin.command:
-        cmd: "kops validate cluster --state=s3://{{ state_store_bucket }} --name={{ CLUSTER_NAME }} --wait 10m" 
