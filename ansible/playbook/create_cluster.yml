@@ -7,7 +7,19 @@
       ansible.builtin.command:
         cmd: "aws s3 mb s3://{{state_store_bucket--bucket }} --region {{ aws_region }}"
         ignore_errors: true
+
+
+
+    - name: verify S3 bucket exists
+      ansible.builtin.command:
+        cmd: "kops get cluster --state=s3://{{ state_store_bucket }} --name={{ cluster_name }}"
+      register: cluster_exists
+      ignore_errors: true
+      changed_when: false
+      failed_when: false
         
+
+
     - name: Create kops cluster configuration
       ansible.builtin.command:
         cmd: >
@@ -20,5 +32,8 @@
           --control-plane-size={{control_plane_size }}
           --yes
       register: cluster_create
-      changed_when: " 'created cluster' in cluster_create.stdout"
+      changed_when: 
+        - "'created cluster' in cluster_create.stdout"
+        - "cluster_exists.rc != 0"
+      when: cluster_exists.rc != 0
 
