@@ -1,0 +1,27 @@
+---
+- name: provision HA Kubernetes Cluster
+  hosts: localhost
+
+  tasks:
+    - name: Create the KOPS S3 state store bucket
+      ansible.builtin.command:
+        cmd: "aws s3 mb s3://{{state_store_bucket--bucket }} --region {{ aws_region }}"
+        ignore_errors: true
+        
+    - name: Create kops cluster configuration
+      ansible.builtin.command:
+        cmd: >
+         kops create cluster \
+          --name={{ cluster_name }} \
+          --state=s3://{{ state_store_bucket }}
+          --zones={{ zones }} \
+          --node-count={{ node_count }} \
+          --node-size={{ node_size }} \
+          --control-plane-size={{control_plane_size }}
+          --yes
+      register: cluster_create
+      changed_when: " 'created cluster' in cluster_create.stdout"
+
+    - name: Wait for cluster readiness
+      ansible.builtin.command:
+        cmd: "kops validate cluster --state=s3://{{ state_store_bucket }} --name={{ CLUSTER_NAME }} --wait 10m" 

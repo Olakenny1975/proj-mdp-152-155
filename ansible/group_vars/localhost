@@ -1,0 +1,7 @@
+cluster_name: "project-2.k8s.local"
+state_store_bucket: "project-2-k8-bucket"
+aws_region: "us-east-1"
+zone: "us-east-1a,us-east-1b"
+node_count: 2
+node_size: "t2.micro"
+control_plane_size: "t2.micro"
