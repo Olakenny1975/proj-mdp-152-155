@@ -29,8 +29,8 @@ pipeline {
                     echo "Creating Kubernetes cluster..."
                     sh """
                     cd ${env.WORKSPACE}/ansible
-                    ansible-playbook -i inventory.ini playbooks/create_bucket.yml
-                    """
+                    ansible-playbook -i inventory/hosts.ini playbooks/install_kubernetes.yml -vvv
+         """
                 }
             }
         }
