@@ -9,20 +9,20 @@ pipeline {
     }
 
  stages {
-        stage('Install Kubernetes Tools') {
-            steps {
-                script {
-                    echo "Installing Kubernetes tools..."
-                    sh """
-                    cd ${env.WORKSPACE}/ansible
-                    pwd
-                    ls -la playbooks/
-                    ansible-playbook -i inventory/hosts.ini playbooks/install_kubernetes.yml
-                    """
-                }
-            }
+       stage('Install Kubernetes Tools') {
+    steps {
+        script {
+            echo "Installing Kubernetes tools..."
+            sh """
+            cd ${env.WORKSPACE}/ansible
+            pwd
+            ls -la playbooks/
+            ansible-playbook -i inventory/hosts.ini playbooks/install_kubernetes.yml
+            """
         }
-        
+    }
+}
+
         stage('Create Cluster') {
             steps {
                 script {
