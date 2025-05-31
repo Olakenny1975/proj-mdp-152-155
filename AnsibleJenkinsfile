@@ -6,7 +6,6 @@ pipeline {
     environment {
         BUCKET_NAME = "project-2.k8s.local"
         CLUSTER_NAME = "project-2-k8-bucket"
-        ANSIBLE_DIR = "ansible"
     }
 
     stages {
@@ -15,7 +14,9 @@ pipeline {
                 script {
                     echo "Installing Kubernetes tools..."
                     sh """
-                    cd ${ANSIBLE_DIR}
+                    cd ${env.WORKSPACE}/ansible
+                    pwd
+                    ls -la playbooks/
                     ansible-playbook -i inventory/hosts.ini playbooks/install_kubernetes.yml
                     """
                 }
@@ -27,7 +28,7 @@ pipeline {
                 script {
                     echo "Creating Kubernetes cluster..."
                     sh """
-                    cd ${ANSIBLE_DIR}
+                    cd ${env.WORKSPACE}/ansible
                     ansible-playbook -i inventory.ini playbooks/create_bucket.yml
                     """
                 }
