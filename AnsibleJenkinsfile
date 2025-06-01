@@ -30,7 +30,7 @@ pipeline {
                     sh """
                     cd ${env.WORKSPACE}/ansible
                     ansible-playbook -i inventory/hosts.ini playbooks/install_kubernetes.yml -vvv
-         """
+                    """
                 }
             }
         }
