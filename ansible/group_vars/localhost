@@ -3,5 +3,5 @@ state_store_bucket: "project-2-k8-bucket"
 aws_region: "us-east-1"
 zone: "us-east-1a,us-east-1b"
 node_count: 2
-node_size: "t2.micro"
-control_plane_size: "t2.micro"
+node_size: "t2.medium"
+control_plane_size: "t2.medium"
