@@ -11,13 +11,13 @@
     
    - name: install kubectl
      ansible.builtin.get_url:
-        url: "https://github.com/kubernetes/kops/releases/download/v1.32/kops-linux-amd64"
-        dest: /usr/local/bin/kops
+        url: "https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl"
+        dest: /usr/local/bin/kubectl
         mode: '0755'
 
   
    - name: install kops
      ansible.builtin.get_url:
-        url: "https://dl.k8s.io/releases/download/v1.33/linux/amd64/kubectl"
-        dest: /usr/local/bin/kubectl
+        url: "https://github.com/kubernetes/kops/releases/download/v1.33.0/kops-linux-amd64"
+        dest: /usr/local/bin/kops
         mode: '0755'
