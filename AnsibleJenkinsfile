@@ -8,6 +8,21 @@ pipeline {
         CLUSTER_NAME = "project-2-k8-bucket"
     }
 
+     stages {
+        stage('Checkout & Verify') {
+            steps {
+                checkout scm
+                sh '''
+                echo "=== WORKSPACE STRUCTURE ==="
+                find ${WORKSPACE} -type d
+                echo "=== ANSIBLE FILES ==="
+                ls -la ${WORKSPACE}/ansible/playbooks/
+                '''
+            }
+        }
+    }
+}
+
  stages {
        stage('Install Kubernetes Tools') {
     steps {
