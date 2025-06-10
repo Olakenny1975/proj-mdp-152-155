@@ -40,19 +40,20 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to Kubernetes') {
             steps {
 
                 sh """
                 cd kubernetes
                 kubectl apply -f deployment.yaml
-                kubectl set image deployment/project-1 project-1=${REPO_NAME}:${TAG}
+                kubectl set image deployment/webapp-delopyment webapp="${REPO_NAME}:${TAG}"
+                kubectl apply -f service.yaml
                 """
                 }
             }
         }
     }
-}
+
 pipeline {
     agent any
 
