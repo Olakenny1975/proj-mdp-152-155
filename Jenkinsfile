@@ -1,7 +1,13 @@
 pipeline {
-    agent {
-        label "builder"
+  agent any
+  stages {
+    stage('Test') {
+      steps {
+        echo 'Hello, Jenkins!'
+      }
     }
+  }
+}
 
     environment {
         REPO_NAME = "kehisa/project-1"
