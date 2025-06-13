@@ -1,19 +1,23 @@
 pipeline {
-  agent any
-  stages {
-    stage('Test') {
-      steps {
-        echo 'Hello, Jenkins!'
-      }
+    agent any
+
+    tools {
+        git 'Default'
+        maven 'Maven 3.6.3'
     }
-  }
-}
 
     environment {
         REPO_NAME = "kehisa/project-1"
+        GIT_CREDENTIALS = credentials('your-credentials-id') 
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/Olakenny1975/proj-mdp-152-155.git', credentialsId: 'your-credentials-id'
+            }
+        }
+
         stage('Set Tag Version') {
             steps {
                 script {
@@ -48,34 +52,12 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-
                 sh """
                 cd kubernetes
                 kubectl apply -f deployment.yaml
-                kubectl set image deployment/webapp-delopyment webapp="${REPO_NAME}:${TAG}"
+                kubectl set image deployment/webapp-deployment webapp=${REPO_NAME}:${TAG}
                 kubectl apply -f service.yaml
                 """
-                }
-            }
-        }
-    }
-
-pipeline {
-    agent any
-
-    tools {
-        git 'Default' // Match the name configured in Global Tool Configuration
-    }
-
-    environment {
-        GIT_CREDENTIALS = credentials('your-credentials-id') // Replace with your credentials ID
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/Olakenny1975/proj-mdp-152-155.git', credentialsId: 'your-credentials-id'
-            }
         }
     }
 }
